@@ -9,7 +9,7 @@ import org.ascore.executor.ASCExecutorBuilder
 import ray.module.DixModules
 
 val CODE = """
-    print 1
+    print 1 2
     
     """.trimIndent()
 
