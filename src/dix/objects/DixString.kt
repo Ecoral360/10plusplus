@@ -10,4 +10,6 @@ class DixString(value: String) : ASCObject<String>(value) {
     constructor(token: Token) : this(
         token.value().substring(1, token.value().length - 1) // removing the enclosing `"` from the string
     )
+
+    override fun toString(): String = "\"$value\""
 }

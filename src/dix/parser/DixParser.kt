@@ -1,14 +1,12 @@
 package dix.parser
 
-import dix.ast.expressions.AddExpr
-import dix.ast.expressions.ConstValueExpr
-import dix.ast.statements.PrintStmt
+import dix.ast.expressions.*
+import dix.ast.statements.ExprStmt
 import dix.execution.DixExecutorState
 import dix.lexer.DixLexer
-import dix.objects.DixFloat
-import dix.objects.DixInt
-import dix.objects.DixString
+import dix.objects.*
 import org.ascore.ast.buildingBlocs.Expression
+import org.ascore.errors.ASCErrors
 import org.ascore.executor.ASCExecutor
 import org.ascore.generators.ast.AstGenerator
 import org.ascore.tokens.Token
@@ -41,7 +39,7 @@ class DixParser(executorInstance: ASCExecutor<DixExecutorState>) : AstGenerator<
      */
     private fun addStatements() {
         // add your statements here
-        addStatement("PRINT expression") { p: List<Any> -> PrintStmt(p[1] as Expression<*>) }
+        addStatement("expression") { p: List<Any> -> ExprStmt(p[0] as Expression<*>) }
     }
 
     /**
@@ -49,19 +47,35 @@ class DixParser(executorInstance: ASCExecutor<DixExecutorState>) : AstGenerator<
      */
     private fun addExpressions() {
         // add your expressions here
-        addExpression("{datatypes}") { p: List<Any> ->
+        addExpression("PAREN_OPEN #expression PAREN_CLOSE") { p: List<Any> ->
+            evalOneExpr(arrayListOf(p.subList(1, p.size - 1)), null)
+        }
+
+        addExpression("{datatypes}~VARIABLE") { p ->
             val token = p[0] as Token
-            when (token.name()) {
-                "INT" -> ConstValueExpr(DixInt(token))
-                "FLOAT" -> ConstValueExpr(DixFloat(token))
+            when (token.name) {
                 "STRING" -> ConstValueExpr(DixString(token))
-                else -> throw NoSuchElementException(token.name())
+                "NUMBER" -> ConstValueExpr(DixNumber(token))
+                "CHAR" -> ConstValueExpr(DixChar(token))
+                "VARIABLE" -> {
+                    VarExpr(token.value, executorInstance.executorState)
+                }
+                else -> throw RuntimeException()
             }
         }
-        addExpression("expression PLUS expression") { p: List<Any> ->
-            AddExpr(
-                p[0] as Expression<*>, p[2] as Expression<*>
-            )
+
+        addExpression("expression expression") { p: List<Any> ->
+            val expr1 = p[0] as Expression<*>
+            val expr2 = p[1] as Expression<*>
+            when (expr1) {
+                is FuncCallExprBuilder -> {
+                    expr1.addExpr(expr2)
+                    expr1
+                }
+
+                is VarExpr -> FuncCallExprBuilder(expr1, executorInstance.executorState, arrayListOf(expr2))
+                else -> throw ASCErrors.ErreurSyntaxe("AAAAAA")
+            }
         }
     }
 }

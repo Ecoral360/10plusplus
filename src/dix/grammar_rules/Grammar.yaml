@@ -1,14 +1,15 @@
 Variables: { }
 
 Add:
-  PRINT: \bprint\b
 
   datatypes:
-    INT: -?\d+
-    FLOAT: -?\d+\.\d+
+    NUMBER: '-?\d+(\.\d+)?'
     STRING: '".*?"'
+    CHAR: "'.'"
 
-  PLUS: \+
+  PAREN_OPEN: '\('
+  PAREN_CLOSE: '\)'
+  VARIABLE: '[\-\p{Sm}\w\p{Po}&&[^;]]+'
 
 Ignore:
   - '[\t ]+'
