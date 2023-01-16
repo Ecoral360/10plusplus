@@ -9,6 +9,15 @@ Add:
 
   PAREN_OPEN: '\('
   PAREN_CLOSE: '\)'
+
+  BRACKET_OPEN: '\['
+  BRACKET_CLOSE: '\]'
+
+  BRACES_OPEN: '\{'
+  BRACES_CLOSE: '\}'
+
+  SEMI_COLON: ';'
+  SET: 'set\b'
   VARIABLE: '[\-\p{Sm}\w\p{Po}&&[^;]]+'
 
 Ignore:

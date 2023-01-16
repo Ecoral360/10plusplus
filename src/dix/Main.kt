@@ -3,14 +3,15 @@ package dix
 import dix.execution.DixExecutorState
 import dix.execution.DixPreCompiler
 import dix.lexer.DixLexer
+import dix.module.DixModules
 import dix.parser.DixParser
 import org.ascore.executor.ASCExecutor
 import org.ascore.executor.ASCExecutorBuilder
-import ray.module.DixModules
 
 val CODE = """
-    print 1 2
-    
+    print (+ 1 3 4)
+    set a 0
+    while (< a 5) (print a ; set a (++ a))
     """.trimIndent()
 
 fun main() {

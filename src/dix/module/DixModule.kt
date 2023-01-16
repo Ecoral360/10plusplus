@@ -1,4 +1,4 @@
-package ray.module
+package dix.module
 
 import dix.execution.DixExecutorState
 import dix.objects.DixFunctionModule

@@ -1,10 +1,18 @@
 package dix.objects
 
 import org.ascore.ast.buildingBlocs.Expression
-import org.ascore.lang.objects.ASCObject
 
-class DixLazyExpr(expr: Expression<*>) : ASCObject<Expression<*>>(expr) {
-    fun eval(): ASCObject<*> = value.eval()
+class DixLazyExpr(val expr: Expression<*>) : DixObj<DixObj<*>>(NoValue) {
+    companion object {
+        fun evalIfLazy(value: DixObj<*>) =
+                if (value is DixLazyExpr) value.eval()
+                else value
 
-    override fun toString(): String = value.toString()
+    }
+
+    fun eval(): DixObj<*> = expr.eval() as DixObj<*>
+
+    override fun getValue(): DixObj<*> = this
+
+    // override fun toString(): String = eval().toString()
 }

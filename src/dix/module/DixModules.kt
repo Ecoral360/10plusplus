@@ -1,8 +1,8 @@
-package ray.module
+package dix.module
 
 import dix.execution.DixExecutorState
 import org.ascore.lang.objects.ASCVariable
-import ray.module.builtin.DixBuiltins
+import dix.module.builtin.DixBuiltins
 
 enum class DixModules(val module: DixModule) {
     Builtins(DixBuiltins)
