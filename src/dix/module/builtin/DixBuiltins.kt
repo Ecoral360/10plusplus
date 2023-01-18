@@ -13,12 +13,12 @@ object DixBuiltins : DixModule {
                     *DixNumberModule.loadFunctions(executorState),
 
                     DixFunctionModule("println") { args ->
-                        println(args.joinToString(" ") { DixLazyExpr.evalIfLazy(it).toString() })
+                        println(args.joinToString(" "))
                         DixObj.NoValue
                     },
 
                     DixFunctionModule("print") { args ->
-                        print(args.joinToString(" ") { DixLazyExpr.evalIfLazy(it).toString() })
+                        print(args.joinToString(" "))
                         DixObj.NoValue
                     },
 
@@ -26,7 +26,7 @@ object DixBuiltins : DixModule {
                         DixNumber(args.subList(1, args.size - 1).all { it == args[0] })
                     },
 
-                    DixFunctionModule("set") { args ->
+                    DixFunctionModule("set", false) { args ->
                         val variable = args[0] as DixLazyExpr
                         val varName = (variable.expr as VarExpr).name
                         val value = DixLazyExpr.evalIfLazy(args[1])
@@ -34,7 +34,7 @@ object DixBuiltins : DixModule {
                         value
                     },
 
-                    DixFunctionModule("if") { args ->
+                    DixFunctionModule("if", false) { args ->
                         val condition = args[0]
                         val ifBody = args[1]
                         val elseBody = args.getOrNull(2)
@@ -48,7 +48,7 @@ object DixBuiltins : DixModule {
                         DixObj.NoValue
                     },
 
-                    DixFunctionModule("while") { args ->
+                    DixFunctionModule("while", false) { args ->
                         val condition = args[0]
                         val body = args[1]
 
