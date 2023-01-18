@@ -9,9 +9,11 @@ import org.ascore.executor.ASCExecutor
 import org.ascore.executor.ASCExecutorBuilder
 
 val CODE = """
-    print (+ 1 3 4)
+    println (+ 1 3 4)
     set a 0
-    while (< a 5) (print a ; set a (+ a 1))
+    while (< a 5) (println a ; set a (+ a 1))
+    set myDict { "hey" 3 3 "you" }
+    println myDict
     """.trimIndent()
 
 fun main() {

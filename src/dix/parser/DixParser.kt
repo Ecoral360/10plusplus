@@ -56,7 +56,12 @@ class DixParser(executorInstance: ASCExecutor<DixExecutorState>) : AstGenerator<
             LazyExpr(DixLazyExpr(ExprBuilder.buildIfBuildable(expr)))
         }
 
-        addExpression("BRACKET_OPEN #expression BRACKET_CLOSE") { p: List<Any> ->
+        addExpression("BRACKET_OPEN BRACKET_CLOSE~" +
+                "BRACKET_OPEN #expression BRACKET_CLOSE") { p: List<Any>, variant: Int ->
+            if (variant == 0) {
+                return@addExpression CreateListExpr()
+            }
+
             val expr = evalOneExpr(arrayListOf(*p.subList(1, p.size - 1).toTypedArray()),
                     Hashtable(mapOf<String, AstNode<out Expression<*>>>(
                             "expression expression" to AstNode.from(-2) { p ->
@@ -76,9 +81,30 @@ class DixParser(executorInstance: ASCExecutor<DixExecutorState>) : AstGenerator<
             else CreateListExpr(arrayListOf(expr))
         }
 
-        // addExpression("BRACES_OPEN #expression BRACES_CLOSE") { p: List<Any> ->
-        //     evalOneExpr(arrayListOf(p.subList(1, p.size - 1)), null)
-        // }
+        addExpression("BRACES_OPEN BRACES_CLOSE~" +
+                "BRACES_OPEN #expression BRACES_CLOSE") { p: List<Any>, variant: Int ->
+            if (variant == 0) {
+                return@addExpression CreateDictExpr()
+            }
+
+            val expr = evalOneExpr(arrayListOf(*p.subList(1, p.size - 1).toTypedArray()),
+                    Hashtable(mapOf<String, AstNode<out Expression<*>>>(
+                            "expression expression" to AstNode.from(-2) { p ->
+                                val expr1 = p[0] as Expression<*>
+                                val expr2 = p[1] as Expression<*>
+                                when (expr1) {
+                                    is CreateDictBuilderExpr -> {
+                                        expr1.addExpr(expr2)
+                                        expr1
+                                    }
+
+                                    else -> CreateDictBuilderExpr(arrayListOf(expr1, expr2))
+                                }
+                            }
+                    )))
+            if (expr is CreateDictBuilderExpr) expr.build()
+            else throw ASCErrors.ErreurType("Tried to create a dict with only one element in it")
+        }
 
         addExpression("SET VARIABLE") { p ->
             val variable = VarExpr((p[1] as Token).value, executorInstance.executorState)

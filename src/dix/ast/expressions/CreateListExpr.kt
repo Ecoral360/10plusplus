@@ -16,7 +16,7 @@ data class CreateListExpr(private val values: List<Expression<*>> = arrayListOf(
 class CreateListBuilderExpr(private val elements: ArrayList<Expression<*>> = arrayListOf()) : ExprBuilder {
 
     fun addExpr(expr: Expression<*>) {
-        elements.add(if (expr is CreateListBuilderExpr) expr.build() else expr)
+        elements.add(if (expr is ExprBuilder) expr.build() else expr)
     }
 
     override fun eval(): DixObj<*> {
