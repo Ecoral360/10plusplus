@@ -10,33 +10,20 @@ import org.ascore.lang.objects.ASCVariable
 object DixBuiltins : DixModule {
     override fun loadFunctions(executorState: DixExecutorState): Array<DixFunctionModule> =
             arrayOf(
-                    DixFunctionModule("print") { args ->
+                    *DixNumberModule.loadFunctions(executorState),
+
+                    DixFunctionModule("println") { args ->
                         println(args.joinToString(" ") { DixLazyExpr.evalIfLazy(it).toString() })
                         DixObj.NoValue
                     },
 
-                    DixFunctionModule("+") { args ->
-                        DixNumber(args.sumOf { (it.value as Number).toDouble() })
+                    DixFunctionModule("print") { args ->
+                        print(args.joinToString(" ") { DixLazyExpr.evalIfLazy(it).toString() })
+                        DixObj.NoValue
                     },
 
-                    DixFunctionModule("++") { args ->
-                        DixNumber((args[0].value as Number).toDouble() + 1)
-                    },
-
-                    DixFunctionModule("<") { args ->
-                        DixNumber((args[0].value as Number).toDouble() < (args[1].value as Number).toDouble())
-                    },
-
-                    DixFunctionModule("<=") { args ->
-                        DixNumber((args[0].value as Number).toDouble() <= (args[1].value as Number).toDouble())
-                    },
-
-                    DixFunctionModule(">") { args ->
-                        DixNumber((args[0].value as Number).toDouble() > (args[1].value as Number).toDouble())
-                    },
-
-                    DixFunctionModule(">=") { args ->
-                        DixNumber((args[0].value as Number).toDouble() >= (args[1].value as Number).toDouble())
+                    DixFunctionModule("=") { args ->
+                        DixNumber(args.subList(1, args.size - 1).all { it == args[0] })
                     },
 
                     DixFunctionModule("set") { args ->
@@ -74,5 +61,7 @@ object DixBuiltins : DixModule {
             )
 
     override fun loadVariables(executorState: DixExecutorState): Array<ASCVariable<*>> =
-            arrayOf()
+            arrayOf(
+                    *DixNumberModule.loadVariables(executorState),
+            )
 }

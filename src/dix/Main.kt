@@ -11,7 +11,7 @@ import org.ascore.executor.ASCExecutorBuilder
 val CODE = """
     print (+ 1 3 4)
     set a 0
-    while (< a 5) (print a ; set a (++ a))
+    while (< a 5) (print a ; set a (+ a 1))
     """.trimIndent()
 
 fun main() {
