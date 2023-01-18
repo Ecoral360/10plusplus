@@ -15,6 +15,6 @@ class DixPreCompiler : ASCPrecompiler() {
      * @return The precompiled source code as an array of strings. (aka the actual code that will be compiled)
      */
     override fun preCompile(program: String): String {
-        return program
+        return program.split("\n").joinToString("\n") { it.trim() }
     }
 }
