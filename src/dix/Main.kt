@@ -19,24 +19,28 @@ val CODE = """
 fun main() {
     val lexer = DixLexer("/dix/grammar_rules/Grammar.yaml");
     val executor = ASCExecutorBuilder<DixExecutorState>() // create an executor builder
-            .withLexer(lexer) // add the lexer to the builder
-            .withParser { executorInstance: ASCExecutor<DixExecutorState> ->
-                DixParser(
-                        executorInstance
-                )
-            } // add the parser to the builder
-            .withExecutorState(DixExecutorState()) // add the executor state to the builder
-            .withPrecompiler(DixPreCompiler()) // add the precompiler to the builder
-            .build() // build the executor
+        .withLexer(lexer) // add the lexer to the builder
+        .withParser { executorInstance: ASCExecutor<DixExecutorState> ->
+            DixParser(
+                executorInstance
+            )
+        } // add the parser to the builder
+        .withExecutorState(DixExecutorState()) // add the executor state to the builder
+        .withPrecompiler(DixPreCompiler()) // add the precompiler to the builder
+        .build() // build the executor
 
-    val compilationResult = executor.compiler(CODE, true) // compile the code
+    executor.setupCompiler()
+    for (line in CODE.split("\n")) {
+        val compilationResult = executor.compileOneLine(line, false) // compile the code
+        if (compilationResult.length() != 0) {
+            println(compilationResult)
+            return
+        }
+    }
+    executor.compileOneLine("\n", true)
 
     DixModules.load(executor.executorState)
 
-    if (compilationResult.length() != 0) {
-        println(compilationResult)
-        return
-    }
     val executionResult = executor.executerMain(false) // execute the code
 
     println(executionResult) // print the result

@@ -7,6 +7,7 @@ import dix.lexer.DixLexer
 import dix.objects.*
 import org.ascore.ast.AstNode
 import org.ascore.ast.buildingBlocs.Expression
+import org.ascore.ast.buildingBlocs.Statement
 import org.ascore.errors.ASCErrors
 import org.ascore.executor.ASCExecutor
 import org.ascore.generators.ast.AstGenerator
@@ -44,6 +45,7 @@ class DixParser(executorInstance: ASCExecutor<DixExecutorState>) : AstGenerator<
     private fun addStatements() {
         // add your statements here
         addStatement("expression") { p: List<Any> -> ExprStmt(p[0] as Expression<*>) }
+        addStatement("") { _ -> Statement.EMPTY_STATEMENT }
     }
 
     /**
@@ -56,63 +58,72 @@ class DixParser(executorInstance: ASCExecutor<DixExecutorState>) : AstGenerator<
             LazyExpr(DixLazyExpr(ExprBuilder.buildIfBuildable(expr)))
         }
 
-        addExpression("BRACKET_OPEN BRACKET_CLOSE~" +
-                "BRACKET_OPEN #expression BRACKET_CLOSE") { p: List<Any>, variant: Int ->
+        addExpression(
+            "BRACKET_OPEN BRACKET_CLOSE~" +
+                    "BRACKET_OPEN #expression BRACKET_CLOSE"
+        ) { p: List<Any>, variant: Int ->
             if (variant == 0) {
                 return@addExpression CreateListExpr()
             }
 
             val expr = evalOneExpr(arrayListOf(*p.subList(1, p.size - 1).toTypedArray()),
-                    Hashtable(mapOf<String, AstNode<out Expression<*>>>(
-                            "expression expression" to AstNode.from(-2) { p ->
-                                val expr1 = p[0] as Expression<*>
-                                val expr2 = p[1] as Expression<*>
-                                when (expr1) {
-                                    is CreateListBuilderExpr -> {
-                                        expr1.addExpr(expr2)
-                                        expr1
-                                    }
-
-                                    else -> CreateListBuilderExpr(arrayListOf(expr1, expr2))
-                                }
+                Hashtable(mapOf<String, AstNode<out Expression<*>>>(
+                    "expression expression" to AstNode.from(-2) { p ->
+                        val expr1 = p[0] as Expression<*>
+                        val expr2 = p[1] as Expression<*>
+                        when (expr1) {
+                            is CreateListBuilderExpr -> {
+                                expr1.addExpr(expr2)
+                                expr1
                             }
-                    )))
+
+                            else -> CreateListBuilderExpr(arrayListOf(expr1, expr2))
+                        }
+                    }
+                )))
             if (expr is CreateListBuilderExpr) expr.build()
             else CreateListExpr(arrayListOf(expr))
         }
 
-        addExpression("BRACES_OPEN BRACES_CLOSE~" +
-                "BRACES_OPEN #expression BRACES_CLOSE") { p: List<Any>, variant: Int ->
+        addExpression(
+            "BRACES_OPEN BRACES_CLOSE~" +
+                    "BRACES_OPEN #expression BRACES_CLOSE"
+        ) { p: List<Any>, variant: Int ->
             if (variant == 0) {
                 return@addExpression CreateDictExpr()
             }
 
             val expr = evalOneExpr(arrayListOf(*p.subList(1, p.size - 1).toTypedArray()),
-                    Hashtable(mapOf<String, AstNode<out Expression<*>>>(
-                            "expression expression" to AstNode.from(-2) { p ->
-                                val expr1 = p[0] as Expression<*>
-                                val expr2 = p[1] as Expression<*>
-                                when (expr1) {
-                                    is CreateDictBuilderExpr -> {
-                                        expr1.addExpr(expr2)
-                                        expr1
-                                    }
-
-                                    else -> CreateDictBuilderExpr(arrayListOf(expr1, expr2))
-                                }
+                Hashtable(mapOf<String, AstNode<out Expression<*>>>(
+                    "expression expression" to AstNode.from(-2) { p ->
+                        val expr1 = p[0] as Expression<*>
+                        val expr2 = p[1] as Expression<*>
+                        when (expr1) {
+                            is CreateDictBuilderExpr -> {
+                                expr1.addExpr(expr2)
+                                expr1
                             }
-                    )))
+
+                            else -> CreateDictBuilderExpr(arrayListOf(expr1, expr2))
+                        }
+                    }
+                )))
             if (expr is CreateDictBuilderExpr) expr.build()
             else throw ASCErrors.ErreurType("Tried to create a dict with only one element in it")
         }
 
         addExpression("SET VARIABLE") { p ->
             val variable = VarExpr((p[1] as Token).value, executorInstance.executorState)
-            executorInstance.executorState.scopeManager.currentScope.declareVariable(ASCVariable(variable.name, DixObj.NoValue))
+            executorInstance.executorState.scopeManager.currentScope.declareVariable(
+                ASCVariable(
+                    variable.name,
+                    DixObj.NoValue
+                )
+            )
             FuncCallExprBuilder(
-                    VarExpr("set", executorInstance.executorState),
-                    executorInstance.executorState,
-                    arrayListOf(LazyExpr(DixLazyExpr(variable)))
+                VarExpr("set", executorInstance.executorState),
+                executorInstance.executorState,
+                arrayListOf(LazyExpr(DixLazyExpr(variable)))
             )
         }
 
@@ -151,7 +162,12 @@ class DixParser(executorInstance: ASCExecutor<DixExecutorState>) : AstGenerator<
                     expr1
                 }
 
-                else -> MultiStmtExpr(arrayListOf(ExprBuilder.buildIfBuildable(expr1), ExprBuilder.buildIfBuildable(expr2)))
+                else -> MultiStmtExpr(
+                    arrayListOf(
+                        ExprBuilder.buildIfBuildable(expr1),
+                        ExprBuilder.buildIfBuildable(expr2)
+                    )
+                )
             }
         }
     }

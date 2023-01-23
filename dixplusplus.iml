@@ -7,11 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="ASCore" level="project" />
-    <orderEntry type="library" name="ASCore (2)" level="project" />
-    <orderEntry type="library" name="ASCore (3)" level="project" />
-    <orderEntry type="library" name="ASCore (4)" level="project" />
-    <orderEntry type="library" name="ASCore (5)" level="project" />
     <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
     <orderEntry type="module-library">
       <library name="testng">
@@ -28,5 +23,28 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library name="testng">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/testng-7.1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/jcommander-1.72.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/guice-4.1.0-no_aop.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/javax.inject-1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/aopalliance-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/guava-19.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/snakeyaml-1.21.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="ASCore" level="project" />
+    <orderEntry type="library" name="ASCore (2)" level="project" />
+    <orderEntry type="library" name="ASCore (3)" level="project" />
+    <orderEntry type="library" name="ASCore (4)" level="project" />
+    <orderEntry type="library" name="ASCore (5)" level="project" />
+    <orderEntry type="library" name="ASCore (6)" level="project" />
+    <orderEntry type="library" name="ASCore (7)" level="project" />
+    <orderEntry type="library" name="ASCore (8)" level="project" />
   </component>
 </module>

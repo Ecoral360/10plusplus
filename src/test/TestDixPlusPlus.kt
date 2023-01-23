@@ -59,7 +59,7 @@ class TestDixPlusPlus {
                 .withPrecompiler(DixPreCompiler()) // add the precompiler to the builder
                 .build() // build the executor
 
-        val compilationResult = executor.compiler(code, true) // compile the code
+        val compilationResult = executor.compile(code, true) // compile the code
 
         DixModules.load(executor.executorState)
 

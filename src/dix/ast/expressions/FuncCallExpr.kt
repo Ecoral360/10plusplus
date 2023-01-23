@@ -31,4 +31,8 @@ class FuncCallExprBuilder(private val func: VarExpr, val executorState: DixExecu
     }
 
     override fun build(): FuncCallExpr = FuncCallExpr(func, args, executorState)
+
+    override fun toString(): String {
+        return "FuncCallExprBuilder(func=$func, args=$args)"
+    }
 }
